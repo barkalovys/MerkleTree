@@ -3,6 +3,7 @@
 
 namespace Merkle\Tree;
 
+use Merkle\Builder\MerkleTreeBuilder;
 use Merkle\Node\INode;
 
 /**
@@ -23,12 +24,12 @@ class MerkleTree extends \RecursiveIteratorIterator
 
     /**
      * MerkleTree constructor.
-     * @param INode $root
+     * @param array $data
+     * @param callable $hashAlgorithm
      */
-    public function __construct(INode $root)
+    public function __construct(array $data, callable $hashAlgorithm)
     {
-        parent::__construct($root);
-        $this->root = $root;
+        parent::__construct($this->root = MerkleTreeBuilder::buildRoot($data, $hashAlgorithm));
         $this->depth = $this->getTreeDepth();
     }
 

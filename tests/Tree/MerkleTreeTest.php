@@ -14,14 +14,10 @@ class MerkleTreeTest extends TestCase
 
     public function testTreeDepthIsCorrect()
     {
-        $root = new Node(1);
-        $node = $root;
-        for ($i = 0; $i < 10; ++$i) {
-            $newNode = new Node($i);
-            $node->setChildren([$newNode]);
-            $node = current($node->getChildren());
-        }
-        $tree = new MerkleTree($root);
-        $this->assertEquals(10, $tree->getTreeDepth());
+        $data = range(1,9);
+        $tree = new MerkleTree($data, function(string $val){
+            return md5($val);
+        });
+        $this->assertEquals(4, $tree->getTreeDepth());
     }
 }

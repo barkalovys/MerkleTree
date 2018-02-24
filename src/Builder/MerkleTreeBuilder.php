@@ -16,17 +16,16 @@ class MerkleTreeBuilder
     /**
      * @param array $data
      * @param callable $hashAlgorithm
-     * @return MerkleTree
+     * @return INode root node
      */
-    public static function build(array $data, callable $hashAlgorithm)
+    public static function buildRoot(array $data, callable $hashAlgorithm)
     {
         $leafs = array_map(function ($value) use ($hashAlgorithm) {
             return (new Node($hashAlgorithm($value)))
                 ->setIsRoot(false)
                 ->setIsLeaf(true);
         }, $data);
-        $rootNode = self::buildLevel($leafs, $hashAlgorithm);
-        return new MerkleTree($rootNode);
+        return self::buildLevel($leafs, $hashAlgorithm);
     }
 
     /**
