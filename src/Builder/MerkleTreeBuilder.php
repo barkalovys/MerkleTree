@@ -7,20 +7,21 @@ use Merkle\Node\INode;
 use Merkle\Node\Node;
 use Merkle\Tree\MerkleTree;
 
+/**
+ * Class MerkleTreeBuilder
+ * @package Merkle\Builder
+ */
 class MerkleTreeBuilder
 {
-
-    const DEFAULT_HASH_ALGORITHM = 'sha256';
-
     /**
      * @param array $data
-     * @param string $hashAlgorithm
+     * @param callable $hashAlgorithm
      * @return MerkleTree
      */
-    public static function build(array $data, string $hashAlgorithm = self::DEFAULT_HASH_ALGORITHM)
+    public static function build(array $data, callable $hashAlgorithm)
     {
         $leafs = array_map(function ($value) use ($hashAlgorithm) {
-            return (new Node(hash($hashAlgorithm, $value)))
+            return (new Node($hashAlgorithm($value)))
                 ->setIsRoot(false)
                 ->setIsLeaf(true);
         }, $data);
@@ -30,11 +31,11 @@ class MerkleTreeBuilder
 
     /**
      * @param array $childNodes
-     * @param string $hashAlgorithm
+     * @param callable $hashAlgorithm
      * @return INode
      * @throws \InvalidArgumentException
      */
-    protected static function buildLevel(array $childNodes, string $hashAlgorithm)
+    protected static function buildLevel(array $childNodes, callable $hashAlgorithm)
     {
         if (!$childNodes) {
             throw new \InvalidArgumentException('Empty nodes list passed to method ' . __METHOD__);
@@ -57,8 +58,7 @@ class MerkleTreeBuilder
                 $currentPair[] = $childNodes[$i];
             }
             $parentNode = new Node(
-                hash(
-                    $hashAlgorithm,
+                $hashAlgorithm(
                     $currentPair[0]->getValue() . $currentPair[1]->getValue()
                 )
             );

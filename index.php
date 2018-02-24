@@ -1,24 +1,13 @@
 <?php
 
-define('APP_NAME', 'Merkle');
+require_once 'vendor/autoload.php';
 
-/**
- * @param string $className
- */
-function __autoload(string $className)
-{
-    $parts = explode('\\', $className);
-    if (isset($parts[0]) && $parts[0] === APP_NAME) {
-        $includePath = 'src';
-        array_shift($parts);
-        foreach ($parts as $part) {
-            $includePath .= DIRECTORY_SEPARATOR . $part;
-        }
-        require_once $includePath . '.php';
-    }
-}
+$hashAlgorithm = function($value){
+    return hash('sha256', hash('sha256', $value));
+};
 
-$tree = \Merkle\Builder\MerkleTreeBuilder::build([1,2,3,4,5], 'sha256');
+$tree = \Merkle\Builder\MerkleTreeBuilder::build([1,2,3,4,5], $hashAlgorithm);
+echo "Tree depth: " . $tree->getTreeDepth() . PHP_EOL;
 echo "Root: " . $tree->getRoot()->getValue() . PHP_EOL;
 $i = 1;
 $children = $tree->getRoot()->getChildren();
