@@ -2,7 +2,6 @@
 
 namespace Merkle\Tree;
 
-use Merkle\Node\Node;
 use PHPUnit\Framework\TestCase;
 
 /**

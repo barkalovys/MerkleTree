@@ -2,7 +2,7 @@
 
 namespace Merkle\Node;
 
-interface INode
+interface INode extends \RecursiveIterator
 {
     /**
      * @return string
@@ -21,17 +21,6 @@ interface INode
     function setIsRoot(bool $isRoot):INode;
 
     /**
-     * @return bool
-     */
-    function isLeaf():bool;
-
-    /**
-     * @param bool $isLeaf
-     * @return INode
-     */
-    function setIsLeaf(bool $isLeaf):INode;
-
-    /**
      * @return INode|null
      */
     function getParent();
@@ -48,14 +37,19 @@ interface INode
     function hasChildren():bool;
 
     /**
+     * @return \RecursiveIterator
+     */
+    function getChildren():\RecursiveIterator;
+
+    /**
      * @return array
      */
-    function getChildren():array;
+    function getChildNodes():array;
 
     /**
      * @param array $children
      * @return INode
      */
-    function setChildren(array $children):INode;
+    function setChildNodes(array $children):INode;
 
 }

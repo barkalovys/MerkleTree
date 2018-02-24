@@ -14,34 +14,31 @@ class MerkleTreeBuilderTest extends TestCase
         $hashFunction = function (string $val){
             return md5($val);
         };
-        $tree = MerkleTreeBuilder::build($data, $hashFunction);
-        $this->assertEquals('d37a60fb7556c542502509dfe4d93928', $tree->getRoot()->getValue());
+        $root = MerkleTreeBuilder::buildRoot($data, $hashFunction);
+        $this->assertEquals('d37a60fb7556c542502509dfe4d93928', $root->getValue());
     }
 
-    public function testBuildedTreeIsBinary()
+    public function testBuildedRootIsBinary()
     {
         $data = [1, 2, 3];
         $hashFunction = function (string $val){
             return md5($val);
         };
-        $tree = MerkleTreeBuilder::build($data, $hashFunction);
-        $children = $tree->getRoot()->getChildren();
+        $root = MerkleTreeBuilder::buildRoot($data, $hashFunction);
+        $children = $root->getChildNodes();
         $this->assertEquals(2, count($children));
         do {
             $nextLevelNodes = [];
             /** @var INode $currentNode */
             $currentNode = current($children);
-            $this->assertInstanceOf(INode::class, $currentNode);
-            $expectedChildrenCount = $currentNode->getChildren() ? 2 : 0;
+            $expectedChildrenCount = $currentNode->getChildNodes() ? 2 : 0;
             /** @var INode $node */
             foreach ($children as $node) {
-                $this->assertInstanceOf(INode::class, $node);
-                $this->assertEquals($expectedChildrenCount, count($node->getChildren()));
-                $nextLevelNodes = array_merge($nextLevelNodes, $node->getChildren());
+                $this->assertEquals($expectedChildrenCount, count($node->getChildNodes()));
+                $nextLevelNodes = array_merge($nextLevelNodes, $node->getChildNodes());
             }
             $children = $nextLevelNodes;
         } while ($children);
     }
-
 
 }

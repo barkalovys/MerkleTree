@@ -5,12 +5,13 @@ namespace Merkle\Tree;
 
 use Merkle\Builder\MerkleTreeBuilder;
 use Merkle\Node\INode;
+use Traversable;
 
 /**
  * Class MerkleTree
  * @package Merkle\Tree
  */
-class MerkleTree extends \RecursiveIteratorIterator
+class MerkleTree implements \IteratorAggregate
 {
     /**
      * @var INode
@@ -29,9 +30,18 @@ class MerkleTree extends \RecursiveIteratorIterator
      */
     public function __construct(array $data, callable $hashAlgorithm)
     {
-        parent::__construct($this->root = MerkleTreeBuilder::buildRoot($data, $hashAlgorithm));
+        $this->root = MerkleTreeBuilder::buildRoot($data, $hashAlgorithm);
         $this->depth = $this->getTreeDepth();
     }
+
+    /**
+     * @return INode|Traversable
+     */
+    public function getIterator()
+    {
+        return new \RecursiveIteratorIterator($this->getRoot(), \RecursiveIteratorIterator::SELF_FIRST);
+    }
+
 
     /**
      * @return INode
@@ -54,7 +64,7 @@ class MerkleTree extends \RecursiveIteratorIterator
      */
     public function getChildren(): array
     {
-        return $this->getRoot()->getChildren();
+        return $this->getRoot()->getChildNodes();
     }
 
     /**
@@ -64,15 +74,10 @@ class MerkleTree extends \RecursiveIteratorIterator
     {
         if (is_null($this->depth)){
             $depth = 0;
-            $children = $this->getRoot()->getChildren();
+            $children = $this->getRoot()->getChildNodes();
             while ($children) {
-                ++$depth;
-                $nextLevelNodes = [];
-                /** @var \Merkle\Node\INode $node */
-                foreach ($children as $node) {
-                    $nextLevelNodes = array_merge($nextLevelNodes, $node->getChildren());
-                }
-                $children = $nextLevelNodes;
+                $depth++;
+                $children = current($children)->getChildNodes();
             }
             $this->depth = $depth;
         }

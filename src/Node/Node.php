@@ -2,7 +2,7 @@
 
 namespace Merkle\Node;
 
-class Node extends \RecursiveArrayIterator implements INode
+class Node implements INode
 {
     /**
      * @var INode
@@ -12,7 +12,7 @@ class Node extends \RecursiveArrayIterator implements INode
     /**
      * @var array
      */
-    protected $children = [];
+    protected $childNodes = [];
 
     /**
      * @var string
@@ -35,6 +35,7 @@ class Node extends \RecursiveArrayIterator implements INode
      */
     protected $nextSibling;
 
+    private $position;
 
     /**
      * Node constructor.
@@ -43,6 +44,32 @@ class Node extends \RecursiveArrayIterator implements INode
     public function __construct(string $value)
     {
         $this->value = $value;
+        $this->position = 0;
+    }
+
+    public function current()
+    {
+        return $this->childNodes[$this->position];
+    }
+
+    public function next()
+    {
+        ++$this->position;
+    }
+
+    public function key()
+    {
+        return $this->position;
+    }
+
+    public function valid()
+    {
+        return isset($this->childNodes[$this->position]);
+    }
+
+    public function rewind()
+    {
+        $this->position = 0;
     }
 
     function getValue(): string
@@ -61,17 +88,6 @@ class Node extends \RecursiveArrayIterator implements INode
         return $this;
     }
 
-    function isLeaf(): bool
-    {
-        return $this->isLeaf;
-    }
-
-    function setIsLeaf(bool $isLeaf): INode
-    {
-        $this->isLeaf = $isLeaf;
-        return $this;
-    }
-
     public function getParent()
     {
         return $this->parent;
@@ -83,25 +99,38 @@ class Node extends \RecursiveArrayIterator implements INode
         return $parent;
     }
 
+    public function hasChildNodes()
+    {
+        return !empty($this->childNodes);
+    }
+
     /**
      * @return bool
      */
     public function hasChildren(): bool
     {
-        return !empty($this->children);
+        return $this->current()->hasChildNodes();
+    }
+
+    /**
+     * @return \RecursiveIterator
+     */
+    public function getChildren(): \RecursiveIterator
+    {
+        return $this->childNodes[$this->position];
     }
 
     /**
      * @return array
      */
-    public function getChildren(): array
+    public function getChildNodes():array
     {
-        return $this->children;
+        return $this->childNodes;
     }
 
-    function setChildren(array $children): INode
+    function setChildNodes(array $children): INode
     {
-        $this->children = $children;
+        $this->childNodes = $children;
         return $this;
     }
 

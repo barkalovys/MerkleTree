@@ -22,8 +22,7 @@ class MerkleTreeBuilder
     {
         $leafs = array_map(function ($value) use ($hashAlgorithm) {
             return (new Node($hashAlgorithm($value)))
-                ->setIsRoot(false)
-                ->setIsLeaf(true);
+                ->setIsRoot(false);
         }, $data);
         return self::buildLevel($leafs, $hashAlgorithm);
     }
@@ -63,7 +62,7 @@ class MerkleTreeBuilder
             );
             $currentPair[0]->setParent($parentNode);
             $currentPair[1]->setParent($parentNode);
-            $parentNode->setChildren($currentPair);
+            $parentNode->setChildNodes($currentPair);
             $currentPair = [];
             $parentNodes[] = $parentNode;
         }
