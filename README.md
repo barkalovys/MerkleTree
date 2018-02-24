@@ -3,7 +3,8 @@ PHP class implementing Merkle tree data structure.
 https://en.wikipedia.org/wiki/Merkle_tree
 
 ## Example:
-       
+   <?php    
+   
     $data = [
         'Lorem',
         'ipsum',
