@@ -6,6 +6,7 @@ https://en.wikipedia.org/wiki/Merkle_tree
 ```php
 
     <?php
+    
     $data = [
         'Lorem',
         'ipsum',
