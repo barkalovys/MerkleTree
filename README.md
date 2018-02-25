@@ -5,8 +5,6 @@ https://en.wikipedia.org/wiki/Merkle_tree
 ## Example:
 ```php
 
-    <?php
-    
     $data = [
         'Lorem',
         'ipsum',
